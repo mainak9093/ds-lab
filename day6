@@ -1,1 +1,99 @@
-abc
+# Load necessary libraries
+library(rvest)
+
+# Read the HTML code from the webpage
+html <- read_html("https://www.iitk.ac.in/math/postdoc")
+
+# Extract the names of the postdoctoral fellows
+postdoc_names <- html %>%
+  html_elements(".head3 a") %>% 
+  html_text()
+
+# Display the names
+print(postdoc_names)
+
+
+
+
+
+
+
+
+# Load necessary libraries
+library(rvest)
+library(dplyr)
+
+# Read the HTML code from the webpage
+html <- read_html("https://editorial.rottentomatoes.com/guide/best-netflix-movies-to-watch-right-now/")
+
+# Extract movie rankings
+rank <- html %>% 
+  html_elements(".countdown-index") %>% 
+  html_text() %>% 
+  as.numeric()
+
+# Extract movie names
+name <- html %>% 
+  html_elements(".article_movie_title a") %>% 
+  html_text()
+
+# Extract tomato scores
+score <- html %>% 
+  html_elements(".tMeterScore") %>% 
+  html_text() %>% 
+  gsub("%", "", .) %>% 
+  as.numeric()
+
+# Extract year of the movie
+year <- html %>% 
+  html_elements(".start-year") %>% 
+  html_text() %>% 
+  gsub("[()]", "", .) %>% 
+  as.numeric()
+
+# Extract movie directors
+director <- html %>% 
+  html_elements(".director") %>% 
+  html_text()
+
+# Create a clean data frame
+netflix_movies <- data.frame(
+  Ranking = rank,
+  Name = name,
+  TomatoScore = score,
+  Year = year,
+  Director = director,
+  stringsAsFactors = FALSE
+)
+
+# Display the data frame
+print(netflix_movies)
+
+
+
+
+
+
+
+
+
+# Load necessary libraries
+library(rvest)
+library(dplyr)
+
+# Read the HTML code from the webpage
+html <- read_html("https://www.espn.com/tenis/rankings/_/tipo/wta")
+
+# Extract the table
+wta_table <- html %>% 
+  html_table(fill = TRUE) %>% 
+  .[[1]]
+
+# Clean the table: Select Rank, Name, Points, and Age columns
+clean_wta_table <- wta_table %>% 
+  select(Rank = 1, Name = 2, Points = 3, Age = 5) %>% 
+  filter(!is.na(Rank))
+
+# Display the cleaned table
+print(clean_wta_table)
+
