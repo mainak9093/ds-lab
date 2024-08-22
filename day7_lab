@@ -1,1 +1,51 @@
+library(rvest)
+library(tidyverse)
 
+html <- read_html("https://editorial.rottentomatoes.com/guide/best-netflix-movies-to-watch-right-now/")
+
+#html_elements
+#html_text
+#html_table
+#html_element
+#html_attrs
+
+
+
+website <- html %>%
+  html_elements(".article_movie_title a") %>%
+  html_attr("href")
+
+num_movies <- length(website)
+revs <- numeric(length = length(website))
+tomato <- numeric(length = length(website))
+popcorn <- numeric(length = length(website))
+audrevs <- numeric(length = length(website))
+for(i in 1:num_movies)
+{
+  html_movies <- 
+}
+
+
+
+#for(i in 1:num_movies[i])
+#{
+#  html_movie <- read_html(website[i])
+#  alll-rts <- html_movie %>% html_elements("rt-link")
+#  for(j in 1:length(all-rts))
+# {
+#   slot <- all-rts{j}%>%html_attr("slot")
+    #    if(!is.na(slot))
+#   {
+      
+#   }
+# }
+#}
+
+
+foo <-html_movie %>% html_elements("rt-link[slot = critricsReview]") %>%
+  html_text()
+
+
+as.numeric(strsplit(foo, " ")[[[1]]])
+
+save(data, file = "Tomato.Rdata")
