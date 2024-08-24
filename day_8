@@ -1,1 +1,54 @@
+library(tidyverse)
+library(rvest)
+library(dplyr)
 
+
+html <- read_html("https://www.relianceiccrankings.com/ranking/womenodi/batting/")
+dat <- html_table(html)
+
+batting <- dat[[1]]
+colnames(batting)[4]<-"Country"
+colnames(batting)[1]<-"ranking"
+
+country <- html %>%
+  html_elements("tr img") %>% 
+  html_attr("alt")
+
+batting$Country <- country
+
+as_tibble(batting)
+
+
+starwars %>% filter(skin_color == "light", eye_color == "brown")
+
+starwars %>% arrange(height, mass)
+
+starwars %>% arrange(desc(height),mass)
+
+starwars %>% slice(5:10)
+
+starwars %>% select(hair_color, skin_color, eye_color)
+# Select all columns ending with color
+starwars %>% select(ends_with("color"))
+
+starwars %>% mutate(height_m = height / 100) %>%select(starts_with("height"))
+
+a1 <- group_by(starwars,species,sex)
+
+a2 <- select(a1,height,mass)
+a3 <- summarise(a2,
+                 height = mean(height,na.rm = TRUE),
+                 mass = mean(mass,na.rm = TRUE)
+                 )
+summarise(a2, count = n())
+
+## mtcars
+data <- as_tibble(mtcars)
+
+cyl_data <- mtcars %>% group_by(cyl)
+
+b1 <- group_by(mtcars,disp,hp)
+
+tab2 <- mtcars %>%select("disp","hp")
+
+batting_india <- batting %>%select("Country")
