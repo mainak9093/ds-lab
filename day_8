@@ -51,4 +51,9 @@ b1 <- group_by(mtcars,disp,hp)
 
 tab2 <- mtcars %>%select("disp","hp")
 
-batting_india <- batting %>%select("Country")
+india <- batting %>% filter(Country == "IND")
+
+india %>% select(ranking,Name,Country)
+#india$ranking
+
+mean_Rank <- by_country %>% summarise(average.rank = mean(ranking))
