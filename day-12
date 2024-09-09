@@ -1,1 +1,114 @@
+library(rvest)
+library(tidyverse)
+
+
+# Page of the 100 movies
+html <- read_html("https://editorial.rottentomatoes.com/guide/best-netflix-movies-to-watch-right-now/")
+
+
+# getting a tag in titlecolumn class and the text in there
+website <- html %>%  
+  html_elements(".article_movie_title a") %>%
+  html_attr("href")
+
+
+num_movies <- length(website)
+revs <- numeric(length = length(website))
+tomato <- numeric(length = length(website))
+popcorn <- numeric(length = length(website))
+audrevs <- numeric(length = length(website))
+
+
+
+
+
+
+for(i in 1:num_movies)
+{
+  html_movie <- read_html(website[i])
+  revs[i] <- html_movie %>% html_elements("rt-link[slot = criticsReviews]")%>%
+    html_text()
+  audrevs[i] <- html_movie %>% html_elements("rt-link[slot = audienceReviews]")%>%
+    html_text()
+  
+  tomato[i] <- html_movie %>% html_elements("rt-button[slot = criticsScore]")%>%
+    html_text()
+  
+  popcorn[i] <- html_movie %>% html_elements("rt-button[slot = audienceScore]")%>%
+    html_text()
+  
+}
+
+
+
+
+temp <- as.numeric(strsplit(revs[1], " ")[[1]])
+temp[!is.na(temp)]
+
+
+get_revs <- function(k)
+{
+  # extract all parts
+  find_num <- as.numeric(strsplit(k, " ")[[1]])
+  num <- find_num[!is.na(find_num)]
+  # only return the numeric part
+  return(num)
+}
+
+
+
+
+revs_clean <- numeric(length = 100)
+audrevs_clean <- numeric(length = 100)
+tomato_clean <- numeric(length = 100)
+popcorn_clean <- numeric(length = 100)
+
+
+for(i in 1:100)
+{
+  # Clean Reviews
+  find_num <- as.numeric(strsplit(revs[i], " ")[[1]])
+  revs_clean[i] <- find_num[!is.na(find_num)]
+  
+  # Clean Audience Reviews
+  get_one <- strsplit(audrevs[i], "\\+")[[1]][1]
+  
+  # Find the number, remove the `+`, remove the , combine
+  then <- tail(strsplit(get_one, " ")[[1]], 1)
+  then <- paste0(strsplit(then, ",")[[1]], collapse = "")
+  audrevs_clean[i] <- as.numeric(then)
+  
+  # One NA remains in the above
+  
+  # Removing %
+  tomato_clean[i] <- substr(tomato[i], start = 1, stop = nchar(tomato[i]) - 1)
+  popcorn_clean[i] <- substr(popcorn[i], start = 1, stop = nchar(popcorn[i]) - 1)
+  popcorn_clean <- as.numeric(popcorn_clean)
+  
+}
+
+
+
+
+data <- data.frame(revs_clean, audrevs_clean, tomato_clean, popcorn_clean)
+save(data,  file = "TomatoList.Rdata")
+
+# Assuming you have a vector `ratings` containing the ratings of the top 250 movies
+# a. Create a histogram with a title and x-axis label
+hist(popcorn_clean, main = "Histogram of Ratings", xlab = "Ratings")
+
+# b. Create the same histogram with white-colored bars
+hist(popcorn_clean, main = "Histogram of Ratings", xlab = "Ratings", col = "white")
+
+# a. Create a boxplot of the ratings with an appropriate title
+boxplot(popcorn_clean, main = "Boxplot of Ratings")
+
+# b. Create the same boxplot with pink-colored bars
+boxplot(popcorn_clean, main = "Boxplot of Ratings", col = "pink")
+
+
+# Create a scatterplot
+plot(audrevs_clean, popcorn_clean, xlab = "Number of Votes", ylab = "Ratings",
+     main = "Scatterplot of Number of Votes vs. Ratings")
+
 
