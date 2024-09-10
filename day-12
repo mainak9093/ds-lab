@@ -1,114 +1,74 @@
-library(rvest)
-library(tidyverse)
+movies <- read.csv("C:/Users/MTH/Documents/MTH 208/day11/worksheet-11-mainak9093-main/worksheet-11-mainak9093-main/movie_unweighted.csv")
+rating_list <- movies[2]
+ratings <- rating_list[[1]]
 
-
-# Page of the 100 movies
-html <- read_html("https://editorial.rottentomatoes.com/guide/best-netflix-movies-to-watch-right-now/")
-
-
-# getting a tag in titlecolumn class and the text in there
-website <- html %>%  
-  html_elements(".article_movie_title a") %>%
-  html_attr("href")
-
-
-num_movies <- length(website)
-revs <- numeric(length = length(website))
-tomato <- numeric(length = length(website))
-popcorn <- numeric(length = length(website))
-audrevs <- numeric(length = length(website))
+unweighted_list <- movies[3]
+unweighted <- unweighted_list[[1]]
 
 
 
+x = seq(0,0,length = 1e3)
+plot(ratings,unweighted)
+lines(x=x, y=x,col = "red")
 
 
+# problem 2 
+#a
 
-for(i in 1:num_movies)
-{
-  html_movie <- read_html(website[i])
-  revs[i] <- html_movie %>% html_elements("rt-link[slot = criticsReviews]")%>%
-    html_text()
-  audrevs[i] <- html_movie %>% html_elements("rt-link[slot = audienceReviews]")%>%
-    html_text()
-  
-  tomato[i] <- html_movie %>% html_elements("rt-button[slot = criticsScore]")%>%
-    html_text()
-  
-  popcorn[i] <- html_movie %>% html_elements("rt-button[slot = audienceScore]")%>%
-    html_text()
-  
-}
+hist(ratings, main = "Histogram of Ratings", xlab = "Ratings")
+#b
 
+hist(ratings, main = "Histogram of Ratings", xlab = "Ratings", col = "white")
 
+#c
 
+par(mfrow = c(1,2))
 
-temp <- as.numeric(strsplit(revs[1], " ")[[1]])
-temp[!is.na(temp)]
+hist(ratings, main = "Histogram of Ratings", xlab = "Ratings")
 
+hist(unweighted, main = "Histogram of Ratings", xlab = "Unweighted")
 
-get_revs <- function(k)
-{
-  # extract all parts
-  find_num <- as.numeric(strsplit(k, " ")[[1]])
-  num <- find_num[!is.na(find_num)]
-  # only return the numeric part
-  return(num)
-}
+hist(ratings, main = "Histogram of Ratings",xlim =  c(7.5, 10) , xlab = "Ratings")
 
+mean_ratings <- mean(ratings)
+median_ratings <- median(ratings)
+abline(v = mean_ratings, col = "blue")
+abline(v = median_ratings, col = "red")
+hist(unweighted, main = "Histogram of Ratings",xlim =  c(7.5, 10) , xlab = "Unweighted")
 
+mean_unweighted <- mean(unweighted)
+median_unweighted <- median(unweighted)
+abline(v = mean_unweighted, col = "blue")
+abline(v = median_unweighted, col = "red")
 
+#d
+variance_ratings <- var(ratings)
+variance_unweighted <- var(unweighted)
 
-revs_clean <- numeric(length = 100)
-audrevs_clean <- numeric(length = 100)
-tomato_clean <- numeric(length = 100)
-popcorn_clean <- numeric(length = 100)
+#Problem 3
 
+boxplot(ratings, main = "Boxplot of Ratings")
 
-for(i in 1:100)
-{
-  # Clean Reviews
-  find_num <- as.numeric(strsplit(revs[i], " ")[[1]])
-  revs_clean[i] <- find_num[!is.na(find_num)]
-  
-  # Clean Audience Reviews
-  get_one <- strsplit(audrevs[i], "\\+")[[1]][1]
-  
-  # Find the number, remove the `+`, remove the , combine
-  then <- tail(strsplit(get_one, " ")[[1]], 1)
-  then <- paste0(strsplit(then, ",")[[1]], collapse = "")
-  audrevs_clean[i] <- as.numeric(then)
-  
-  # One NA remains in the above
-  
-  # Removing %
-  tomato_clean[i] <- substr(tomato[i], start = 1, stop = nchar(tomato[i]) - 1)
-  popcorn_clean[i] <- substr(popcorn[i], start = 1, stop = nchar(popcorn[i]) - 1)
-  popcorn_clean <- as.numeric(popcorn_clean)
-  
-}
+boxplot(ratings, main = "Boxplot of Ratings", col = "pink")
 
+IQR <- quantile(ratings)
 
+#Problem 4
 
+boxplot(ratings, main = "Boxplot of Ratings", col = "pink")
+boxplot(unweighted, main = "Boxplot of Unweighted", col = "green")
 
-data <- data.frame(revs_clean, audrevs_clean, tomato_clean, popcorn_clean)
-save(data,  file = "TomatoList.Rdata")
+combined=cbind(ratings,unweighted) 
 
-# Assuming you have a vector `ratings` containing the ratings of the top 250 movies
-# a. Create a histogram with a title and x-axis label
-hist(popcorn_clean, main = "Histogram of Ratings", xlab = "Ratings")
+boxplot(combined,beside=T)
 
-# b. Create the same histogram with white-colored bars
-hist(popcorn_clean, main = "Histogram of Ratings", xlab = "Ratings", col = "white")
+#Problem 5
+d1=hist(ratings, main = "Histogram of Ratings", xlab = "Ratings",col = adjustcolor("red", alpha.f = .5))
 
-# a. Create a boxplot of the ratings with an appropriate title
-boxplot(popcorn_clean, main = "Boxplot of Ratings")
+d2=hist(unweighted, main = "Histogram of Ratings", xlab = "Unweighted",col = adjustcolor("grey", alpha.f = .5))
+plot( d1,col = adjustcolor("red", alpha.f = .5))  # first histogram
+plot( d2,col = adjustcolor("blue", alpha.f = .5), add=T)  # second
 
-# b. Create the same boxplot with pink-colored bars
-boxplot(popcorn_clean, main = "Boxplot of Ratings", col = "pink")
+#Problem 6
 
-
-# Create a scatterplot
-plot(audrevs_clean, popcorn_clean, xlab = "Number of Votes", ylab = "Ratings",
-     main = "Scatterplot of Number of Votes vs. Ratings")
-
-
+legend()
