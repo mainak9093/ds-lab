@@ -1,0 +1,28 @@
+library(rvest)
+library(tidyverse)
+html <- read_html("https://www.bbc.com/sport/olympics/paris-2024/medals")
+table <- html_table(html)
+table <- table[[1]]
+table <- as.tibble(table)
+table <- table %>% arrange(desc(TotalTotal),desc(GGold),desc(SSilver),desc(BBronze))
+#table %>% slice(33:43)
+Rank <- (1:205)
+table$Rank <- Rank
+for(i in 1:204)
+{
+  if(table$GGold[i] == table$GGold[i+1] & table$TotalTotal[i] == table$TotalTotal[i+1] & table$SSilver[i] == table$SSilver[i+1] & table$BBronze[i] == table$BBronze[i+1]  )
+  {
+    table$Rank[i+1] <- table$Rank[i]
+  }
+}
+
+country <- table$Country
+
+temp <- str_extract_all(country, "[A-Z]+") 
+temp1 <- str_extract_all(country, "[a-z]+")
+cont <- numeric (205)
+for(i in 1:205)
+{
+  cont[i]<- paste (temp[i],temp1[i], sep = "", collapse = NULL, recycle0 = FALSE)
+}
+temp3 <-country %<% country(start =2)
