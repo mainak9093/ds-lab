@@ -1,0 +1,20 @@
+library(ggplot2)
+load("C:/Users/tu39/Downloads/worksheet-12-pjham-main/IMDB_movies.Rdata")
+ggplot(dat, aes(x = rating))
+ggplot(dat, aes(x = rating)) + geom_histogram()
+ggplot(dat, aes(x = rating)) + geom_boxplot()
+ggplot(dat, aes(x = rating)) + geom_bar()
+ggplot(dat, aes(x = year, y = over.votes)) + geom_point()
+ggplot(dat, aes(x = year, y = over.votes)) + geom_point() + coord_cartesian(xlim = c(1996, 2025))
+Year <- dat$year < 2000
+Year <- as.factor(Year)
+levels(Year) <- c("Before 2000", "After 2000")
+ggplot(dat, aes(x = over.votes, y = rating)) + geom_point(aes(shape = Year, col = Year)) + labs(title = "Votes vs Rating", y = "Rating", x = "Number of Votes")
+load("C:/Users/tu39/Downloads/worksheet-12-pjham-main/covid.Rdata")
+g <- ggplot(india_rates,aes(x=State.UT))
+g + geom_bar(aes(fill=colnames(india_rates)), width = 0.5) 
++ 
+  theme(axis.text.x = element_text(angle=65, vjust=0.6)) +
+  labs(title="Categorywise Bar Chart", 
+       subtitle="Manufacturer of vehicles", 
+       caption="Source: Manufacturers from 'mpg' dataset") 
