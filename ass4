@@ -1,28 +1,229 @@
-library(rvest)
-library(tidyverse)
-html <- read_html("https://www.bbc.com/sport/olympics/paris-2024/medals")
-table <- html_table(html)
-table <- table[[1]]
-table <- as.tibble(table)
-table <- table %>% arrange(desc(TotalTotal),desc(GGold),desc(SSilver),desc(BBronze))
-#table %>% slice(33:43)
-Rank <- (1:205)
-table$Rank <- Rank
-for(i in 1:204)
-{
-  if(table$GGold[i] == table$GGold[i+1] & table$TotalTotal[i] == table$TotalTotal[i+1] & table$SSilver[i] == table$SSilver[i+1] & table$BBronze[i] == table$BBronze[i+1]  )
-  {
-    table$Rank[i+1] <- table$Rank[i]
-  }
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+// Function prototypes
+void decimalToBinary(int n);
+void hexToBinary(char hex[]);
+void octalToHex(char octal[]);
+void hexToOctal(char hex[]);
+
+int main() {
+    int choice;
+    printf("Choose a conversion:\n");
+    printf("1. Decimal to Binary\n");
+    printf("2. Hexadecimal to Binary\n");
+    printf("3. Octal to Hexadecimal\n");
+    printf("4. Hexadecimal to Octal\n");
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        int decimal;
+        printf("Enter a decimal number: ");
+        scanf("%d", &decimal);
+        printf("Binary equivalent: ");
+        decimalToBinary(decimal);
+    } else if (choice == 2) {
+        char hex[20];
+        printf("Enter a hexadecimal number: ");
+        scanf("%s", hex);
+        printf("Binary equivalent: ");
+        hexToBinary(hex);
+    } else if (choice == 3) {
+        char octal[20];
+        printf("Enter an octal number: ");
+        scanf("%s", octal);
+        printf("Hexadecimal equivalent: ");
+        octalToHex(octal);
+    } else if (choice == 4) {
+        char hex[20];
+        printf("Enter a hexadecimal number: ");
+        scanf("%s", hex);
+        printf("Octal equivalent: ");
+        hexToOctal(hex);
+    } else {
+        printf("Invalid choice!\n");
+    }
+    return 0;
 }
 
-country <- table$Country
-
-temp <- str_extract_all(country, "[A-Z]+") 
-temp1 <- str_extract_all(country, "[a-z]+")
-cont <- numeric (205)
-for(i in 1:205)
-{
-  cont[i]<- paste (temp[i],temp1[i], sep = "", collapse = NULL, recycle0 = FALSE)
+// Decimal to Binary Conversion
+void decimalToBinary(int n) {
+    int binary[32], i = 0;
+    while (n > 0) {
+        binary[i++] = n % 2;
+        n /= 2;
+    }
+    for (int j = i - 1; j >= 0; j--)
+        printf("%d", binary[j]);
+    printf("\n");
 }
-temp3 <-country %<% country(start =2)
+
+// Hexadecimal to Binary Conversion
+void hexToBinary(char hex[]) {
+    int len = strlen(hex);
+    for (int i = 0; i < len; i++) {
+        switch (hex[i]) {
+            case '0': printf("0000"); break;
+            case '1': printf("0001"); break;
+            case '2': printf("0010"); break;
+            case '3': printf("0011"); break;
+            case '4': printf("0100"); break;
+            case '5': printf("0101"); break;
+            case '6': printf("0110"); break;
+            case '7': printf("0111"); break;
+            case '8': printf("1000"); break;
+            case '9': printf("1001"); break;
+            case 'A': case 'a': printf("1010"); break;
+            case 'B': case 'b': printf("1011"); break;
+            case 'C': case 'c': printf("1100"); break;
+            case 'D': case 'd': printf("1101"); break;
+            case 'E': case 'e': printf("1110"); break;
+            case 'F': case 'f': printf("1111"); break;
+            default: printf("\nInvalid Hexadecimal Digit %c\n", hex[i]);
+        }
+    }
+    printf("\n");
+}
+
+// Octal to Hexadecimal Conversion
+void octalToHex(char octal[]) {
+    int decimal = 0, len = strlen(octal);
+    // Convert octal to decimal
+    for (int i = 0; i < len; i++) {
+        decimal += (octal[i] - '0') * pow(8, len - i - 1);
+    }
+    // Convert decimal to hexadecimal
+    char hex[20];
+    int i = 0;
+    while (decimal > 0) {
+        int rem = decimal % 16;
+        hex[i++] = (rem < 10) ? rem + '0' : rem - 10 + 'A';
+        decimal /= 16;
+    }
+    // Print hexadecimal in reverse order
+    for (int j = i - 1; j >= 0; j--)
+        printf("%c", hex[j]);
+    printf("\n");
+}
+
+// Hexadecimal to Octal Conversion
+void hexToOctal(char hex[]) {
+    int decimal = 0, len = strlen(hex);
+    // Convert hexadecimal to decimal
+    for (int i = 0; i < len; i++) {
+        if (hex[i] >= '0' && hex[i] <= '9')
+            decimal = decimal * 16 + (hex[i] - '0');
+        else if (hex[i] >= 'A' && hex[i] <= 'F')
+            decimal = decimal * 16 + (hex[i] - 'A' + 10);
+        else if (hex[i] >= 'a' && hex[i] <= 'f')
+            decimal = decimal * 16 + (hex[i] - 'a' + 10);
+    }
+    // Convert decimal to octal
+    int octal[20], i = 0;
+    while (decimal > 0) {
+        octal[i++] = decimal % 8;
+        decimal /= 8;
+    }
+    // Print octal in reverse order
+    for (int j = i - 1; j >= 0; j--)
+        printf("%d", octal[j]);
+    printf("\n");
+}
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+#include <string.h>
+
+double DecimalToBinary(int integer, double frac)
+{
+    double binaryTotal, binaryFrac = 0.0, fracFractor = 0.1;
+    int binaryInt = 0;
+    int p = 0, rem, temp;
+
+    // loop to convert integer part to binary
+    while (integer != 0)
+    {
+        rem = integer % 2;
+        binaryInt = binaryInt + rem * pow(10, p);
+        integer = integer / 2;
+        p++;
+        printf("%d %d %d\n",binaryInt,integer,p);
+    }
+    // printf("%d\n",binaryInt);
+    // loop to convert fractional part to binary
+    while (frac != 0)
+    {
+        frac = frac * 2;
+        temp = frac;
+        binaryFrac = binaryFrac + fracFractor * temp;
+        if (temp == 1)
+            frac = frac - temp;
+
+        fracFractor = fracFractor / 10;
+    }
+
+    binaryTotal = binaryInt + binaryFrac;
+    return binaryTotal;
+}
+int main()
+{
+    char input[100];
+    printf("Enter a decimal floating-point number: ");
+    scanf("%s", input);
+    printf("****");
+    int type;
+    scanf("%d", &type);
+    // printf("%s",input);
+    int size = strlen(input);
+    // Split the input into integer and fractional parts
+    int count = 0;
+    while (input[count] != '.')
+    {
+        count++;
+    }
+    char intstr[count], fracstr[size - count - 1];
+    for (int i = 0; i < count; i++)
+    {
+        intstr[i] = input[i];
+    }
+    for (int i = 0; i < size - count - 1; i++)
+    {
+        fracstr[i] = input[i + count + 1];
+    }
+    // printf("%s \n %s",intstr,fracstr);
+    if (type == 1)
+    {
+        int integer = atoi(intstr);
+        int temp = atoi(fracstr);
+        double fraction = (double)(temp);
+        fraction = fraction / pow(10.0, size - count - 1);
+        double result = DecimalToBinary(integer, fraction);
+        // printf("%d %f",integer,fraction);
+        printf("%f",result);
+    }
+    else if(type == 2)
+    {
+        int integer = atoi(intstr);
+        int temp = atoi(fracstr);
+        double fraction = (double)(temp);
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+    
+    return 0;
+}
