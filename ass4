@@ -137,6 +137,7 @@ void hexToOctal(char hex[]) {
 #include <math.h>
 #include <float.h>
 #include <string.h>
+#define lld long double
 
 double DecimalToBinary(int integer, double frac)
 {
@@ -151,7 +152,7 @@ double DecimalToBinary(int integer, double frac)
         binaryInt = binaryInt + rem * pow(10, p);
         integer = integer / 2;
         p++;
-      //  printf("%d %d %d\n",binaryInt,integer,p);
+        //  printf("%d %d %d\n",binaryInt,integer,p);
     }
     // printf("%d\n",binaryInt);
     // loop to convert fractional part to binary
@@ -171,31 +172,129 @@ double DecimalToBinary(int integer, double frac)
 }
 
 // Hexadecimal to Binary Conversion
-void hexToBinary(char hex[]) {
+void hexToBinary(char hex[])
+{
     int len = strlen(hex);
-    for (int i = 0; i < len; i++) {
-        switch (hex[i]) {
-            case '0': printf("0000"); break;
-            case '1': printf("0001"); break;
-            case '2': printf("0010"); break;
-            case '3': printf("0011"); break;
-            case '4': printf("0100"); break;
-            case '5': printf("0101"); break;
-            case '6': printf("0110"); break;
-            case '7': printf("0111"); break;
-            case '8': printf("1000"); break;
-            case '9': printf("1001"); break;
-            case 'A': case 'a': printf("1010"); break;
-            case 'B': case 'b': printf("1011"); break;
-            case 'C': case 'c': printf("1100"); break;
-            case 'D': case 'd': printf("1101"); break;
-            case 'E': case 'e': printf("1110"); break;
-            case 'F': case 'f': printf("1111"); break;
-            default: printf("\nInvalid Hexadecimal Digit %c\n", hex[i]);
+    for (int i = 0; i < len; i++)
+    {
+        switch (hex[i])
+        {
+        case '0':
+            printf("0000");
+            break;
+        case '1':
+            printf("0001");
+            break;
+        case '2':
+            printf("0010");
+            break;
+        case '3':
+            printf("0011");
+            break;
+        case '4':
+            printf("0100");
+            break;
+        case '5':
+            printf("0101");
+            break;
+        case '6':
+            printf("0110");
+            break;
+        case '7':
+            printf("0111");
+            break;
+        case '8':
+            printf("1000");
+            break;
+        case '9':
+            printf("1001");
+            break;
+        case 'A':
+        case 'a':
+            printf("1010");
+            break;
+        case 'B':
+        case 'b':
+            printf("1011");
+            break;
+        case 'C':
+        case 'c':
+            printf("1100");
+            break;
+        case 'D':
+        case 'd':
+            printf("1101");
+            break;
+        case 'E':
+        case 'e':
+            printf("1110");
+            break;
+        case 'F':
+        case 'f':
+            printf("1111");
+            break;
+        default:
+            printf("\nInvalid Hexadecimal Digit %c\n", hex[i]);
         }
     }
     printf("\n");
 }
+
+void octalToHex(char octal[])
+{
+    int decimal = 0, len = strlen(octal);
+    // Convert octal to decimal
+    for (int i = 0; i < len; i++)
+    {
+        decimal += (octal[i] - '0') * pow(8, len - i - 1);
+    }
+    // Convert decimal to hexadecimal
+    char hex[20];
+    int i = 0;
+    while (decimal > 0)
+    {
+        int rem = decimal % 16;
+        hex[i++] = (rem < 10) ? rem + '0' : rem - 10 + 'A';
+        decimal /= 16;
+    }
+    // Print hexadecimal in reverse order
+    for (int j = i - 1; j >= 0; j--)
+        printf("%c", hex[j]);
+    // printf("\n");
+}
+
+// Function to convert an octal fractional part to hexadecimal
+void octalFractionToHexadecimal(const char fractionalPart[])
+{
+    float octalFraction = 0.0;
+
+    // Step 1: Convert octal fractional part to decimal
+    for (int i = 0; fractionalPart[i] != '\0'; i++)
+    {
+        octalFraction += (fractionalPart[i] - '0') * pow(8, -(i + 1));
+    }
+
+    // Step 2: Convert decimal fraction to hexadecimal
+    // printf("Hexadecimal equivalent: 0.");
+    for (int i = 0; i < 10; i++)
+    { // Limit to 10 hexadecimal digits for precision
+        octalFraction *= 16;
+        int hexDigit = (int)octalFraction;
+        if (hexDigit < 10)
+        {
+            printf("%d", hexDigit);
+        }
+        else
+        {
+            printf("%c", hexDigit - 10 + 'A'); // Convert to hexadecimal character (A-F)
+        }
+        octalFraction -= hexDigit;
+        if (octalFraction == 0.0)
+            break; // Stop if there's no remainder
+    }
+    // printf("\n");
+}
+
 int main()
 {
     char input[100];
@@ -230,30 +329,20 @@ int main()
         fraction = fraction / pow(10.0, size - count - 1);
         double result = DecimalToBinary(integer, fraction);
         // printf("%d %f",integer,fraction);
-        printf("%f",result);
+        printf("%f", result);
     }
-    else if(type == 2)
+    else if (type == 2)
     {
         hexToBinary(intstr);
         printf(".");
         hexToBinary(fracstr);
-        
     }
-    else if(type ==3)
+    else if (type == 3)
     {
-        
+        octalToHex(intstr);
+        printf(".");
+        octalFractionToHexadecimal(fracstr);
     }
 
-
-
-
-
-
-
-
-
-
-
-    
     return 0;
 }
