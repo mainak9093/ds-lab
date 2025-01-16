@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int main() {
+    float epsilon = 1.0f; // Start with epsilon = 1
+    float one = 1.0f;
+
+    // Iteratively halve epsilon until 1 + epsilon equals 1
+    while ((one + epsilon) != one) {
+        epsilon /= 2.0f;
+    }
+
+    // The loop exits when epsilon becomes too small to affect 1. Add one more halving.
+    epsilon *= 2.0f;
+
+    printf("Machine Epsilon for float: %e\n", epsilon);
+
+    // Double precision
+    double epsilon_double = 1.0;
+    double one_double = 1.0;
+
+    while ((one_double + epsilon_double) != one_double) {
+        epsilon_double /= 2.0;
+    }
+    epsilon_double *= 2.0;
+
+    printf("Machine Epsilon for double: %e\n", epsilon_double);
+
+    return 0;
+}
