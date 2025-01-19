@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <math.h>
+
+long double f(long double x) {
+    long double a = 1.0;
+    long double b = -0.165;
+    long double c = 0.0;
+    long double d = 0.0003993;
+    long double ans = a * pow(x, 3) + b * pow(x, 2) + c * x + d;
+    return ans;
+}
+
+int main() {
+    long double x_u, x_l, e_s;
+
+    // Fix incorrect use of curly braces instead of parentheses in scanf
+    printf("Enter lower bound, upper bound, and error tolerance: ");
+    scanf("%Lf %Lf %Lf", &x_l, &x_u, &e_s); 
+    // Input the maximum number of iterations
+    int n;
+    printf("Enter the maximum number of iterations: ");
+    scanf("%d", &n);
+
+    // Define arrays to store iteration values
+    long double upper[n], lower[n], middle[n], error[n], function[n];
+    int i = 0;
+
+    // Initialize the first iteration
+    upper[0] = x_u;
+    lower[0] = x_l;
+    middle[0] = (x_u + x_l) / 2.0;
+    function[0] = f(middle[0]);
+    error[0] = 100.0; // Start with a large error to enter the loop
+    int count = 1;
+   // printf("%lf %lf %lf",lower[0],upper[0],middle[0]);
+    // Iterative process
+    while (i < n ) {
+        middle[i] = (upper[i] + lower[i]) / 2.0;
+        function[i] = f(middle[i]);
+
+        if (f(lower[i]) * f(middle[i]) < 0) {
+            lower[i + 1] = lower[i];
+            upper[i + 1] = middle[i];
+        } else if (f(upper[i]) * f(middle[i]) < 0) {
+            upper[i + 1] = upper[i];
+            lower[i + 1] = middle[i];
+        } else {
+            break; // Root is found or close enough
+        }
+        // Update error and move to the next iteration
+        i++;
+        middle[i] = (upper[i] + lower[i]) / 2.0;
+        count++;
+    }
+    for(int i=1;i<n;i++)
+    {
+        error[i] = fabs((middle[i] - middle[i - 1]) / middle[i]) * 100.0; // Percentage error
+        if(error[i] < e_s)
+        {
+            count  = i+1;
+            break;
+        }
+    }
+
+    //Print the results
+    printf("Iter\tLower Bound\tUpper Bound\tMiddle\t\tError\t\tFunction Value\n");
+    double temp;
+    for (int j = 0; j < count -1; j++) {
+        temp = function[j];
+        printf("%d\t%.6Lf\t%.6Lf\t%.6Lf\t%.6Lf\t%E\n", j + 1, lower[j], upper[j], middle[j], error[j], temp);
+    }
+    return 0;
+}
